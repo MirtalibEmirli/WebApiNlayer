@@ -1,4 +1,7 @@
-﻿using Repository.Common;
+﻿using DAL.SqlServer.Context;
+using DAL.SqlServer.Infrastructure;
+using Repository.Common;
+using Repository.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,18 +10,19 @@ using System.Threading.Tasks;
 
 namespace DAL.SqlServer.UnitOfWork;
 
-
-public class SqlUnitOfWork(string connectionString, AppDbContext context) : IUnitOfWork
+public class SqlUnitOfWork(string connection ,AppDbContext context) : IUnitOfWork
 {
-    private readonly string _connectionString = connectionString;
-    private readonly AppDbContext _context = context;
-    public SqlCategoryRepository _sqlCategoryRepository;
+    private readonly string _connectionString = connection;
+    private readonly AppDbContext _context = context; 
 
-    public IcategoryRepository CategoryRepository => _sqlCategoryRepository ?? new SqlCategoryRepository(_connectionString, _context);
+    public SqlProductRepository productRepository;
 
-    public Task<int> SaveChanges()
+    public IProductRepository ProductRepository => productRepository??new SqlProductRepository(_connectionString,_context);
+
+    public ICustomerRepository CustomerRepository => throw new NotImplementedException();
+
+    public async Task<int> SaveChanges()
     {
-        throw new NotImplementedException();
-
+        return await _context.SaveChangesAsync();
     }
 }
