@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Application;
 using Application.CQRS.Products.Commands.Requests;
+using Application.CQRS.Products.Queries.Request;
 namespace WebApiNlayer.Controllers;
 
 [ApiController]
@@ -14,12 +14,13 @@ public class ProductController(ISender sender) : ControllerBase
     {
         return Ok(await _sender.Send(createCategoryRequest));
     }
+  
     [HttpGet("{id}")]
     public async Task<IActionResult> GetProductById(int id)
     {
-        var getProductRequest = new GetProductRequest { Id = id };
-        var response = await _sender.Send(getProductRequest);
-        if (response.IsSuccess == false || response.Data == null)
+        var getProductById = new GetProductByIdRequest { Id = id };
+        var response = await _sender.Send(getProductById);
+        if (response.IsSuccess == false)
         {
             return NotFound(response.Errors);
         }
@@ -28,9 +29,9 @@ public class ProductController(ISender sender) : ControllerBase
 
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
-    {
-        return Ok(await _sender.Send(new GetAllProductsRequest()));
+    public async Task<IActionResult> GetAll([FromQuery] GetAllProductsRequest request)
+    { 
+        return Ok(await _sender.Send(request));
     }
 
     [HttpDelete]
@@ -39,6 +40,7 @@ public class ProductController(ISender sender) : ControllerBase
     {
         return Ok(await _sender.Send(deleteProductRequest));
     }
+
 
     [HttpPut]
     public async Task<IActionResult> UpdateProduct([FromBody] UpdateProductRequest updateProductRequest)

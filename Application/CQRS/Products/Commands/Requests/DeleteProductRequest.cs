@@ -1,5 +1,4 @@
-﻿
-using Application.CQRS.Products.Commands.Responses;
+﻿using Application.CQRS.Products.Commands.Responses;
 using Common.GlobalResponses.Generics;
 using MediatR;
 using System;
@@ -10,9 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.CQRS.Products.Commands.Requests;
 
-public class DeleteProductRequest:IRequest<ResponseModel<DeleteProductResponse
-    >>
+public record struct DeleteProductRequest:IRequest<ResponseModel<DeleteProductResponse>>
 {
-    public int productId { get; set; }
-    public int deletedBy { get; set; }
+    public int Id { get; set; }
 }

@@ -19,7 +19,6 @@ public class SqlProductRepository : BaseSqlRepository, IProductRepository
     {
         _appDbContext = appDb;
 
-
     }
     public async Task AddAsync(Product product)
     {
