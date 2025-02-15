@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Application;
 using Application.CQRS.Products.Commands.Requests;
+using Application.CQRS.Products.Queries.Requests;
 namespace WebApiNlayer.Controllers;
 
 [ApiController]
@@ -14,23 +15,20 @@ public class ProductController(ISender sender) : ControllerBase
     {
         return Ok(await _sender.Send(createCategoryRequest));
     }
+
+
+
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetProductById(int id)
+    public async Task<IActionResult> GetById(int id)
     {
-        var getProductRequest = new GetProductRequest { Id = id };
-        var response = await _sender.Send(getProductRequest);
-        if (response.IsSuccess == false || response.Data == null)
-        {
-            return NotFound(response.Errors);
-        }
-        return Ok(response.Data);
+        return Ok(await _sender.Send(new GetProductByIdRequest { Id = id }));
+
     }
 
-
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll([FromQuery] GetAllProductsRequest getAllProducts)
     {
-        return Ok(await _sender.Send(new GetAllProductsRequest()));
+        return Ok(await _sender.Send(getAllProducts));
     }
 
     [HttpDelete]
@@ -43,6 +41,8 @@ public class ProductController(ISender sender) : ControllerBase
     [HttpPut]
     public async Task<IActionResult> UpdateProduct([FromBody] UpdateProductRequest updateProductRequest)
     {
-        return Ok(await _sender.Send(updateProductRequest));    
+        return Ok(await _sender.Send(updateProductRequest));
     }
-}
+
+
+} 

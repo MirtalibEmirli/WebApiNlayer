@@ -1,5 +1,5 @@
-using DAL.SqlServer;
 using Application;
+using DAL.SqlServer;
 
 var builder = WebApplication.CreateBuilder(args);
 
