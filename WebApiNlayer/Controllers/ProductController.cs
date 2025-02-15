@@ -1,8 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Application;
 using Application.CQRS.Products.Commands.Requests;
-using Application.CQRS.Products.Queries.Requests;
 namespace WebApiNlayer.Controllers;
 
 [ApiController]
@@ -15,20 +13,22 @@ public class ProductController(ISender sender) : ControllerBase
     {
         return Ok(await _sender.Send(createCategoryRequest));
     }
-
-
-
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        return Ok(await _sender.Send(new GetProductByIdRequest { Id = id }));
-
+        var getProductRequest = new GetProductRequest { Id = id };
+        var response = await _sender.Send(getProductRequest);
+        if (response.IsSuccess == false || response.Data == null)
+        {
+            return NotFound(response.Errors);
+        }
+        return Ok(response.Data);
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll([FromQuery] GetAllProductsRequest getAllProducts)
+    public async Task<IActionResult> GetAll()
     {
-        return Ok(await _sender.Send(getAllProducts));
+        return Ok(await _sender.Send(new GetAllProductsRequest()));
     }
 
     [HttpDelete]
@@ -37,6 +37,7 @@ public class ProductController(ISender sender) : ControllerBase
     {
         return Ok(await _sender.Send(deleteProductRequest));
     }
+
 
     [HttpPut]
     public async Task<IActionResult> UpdateProduct([FromBody] UpdateProductRequest updateProductRequest)
