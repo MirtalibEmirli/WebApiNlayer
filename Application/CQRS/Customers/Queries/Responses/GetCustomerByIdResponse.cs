@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Application.CQRS.Customers.Queries.Responses;
 
-public class GetCustomerByIdResponse
+public sealed class GetCustomerByIdResponse
 {
     public required string Name { get; set; }
     public string? LastName { get; set; }

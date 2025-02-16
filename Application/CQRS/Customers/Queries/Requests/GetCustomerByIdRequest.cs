@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Application.CQRS.Customers.Queries.Requests;
 
-public class GetCustomerByIdRequest:IRequest<ResponseModel<GetCustomerByIdResponse>>
+public sealed class GetCustomerByIdRequest:IRequest<ResponseModel<GetCustomerByIdResponse>>
 {
     public int Id { get; set; }
 }

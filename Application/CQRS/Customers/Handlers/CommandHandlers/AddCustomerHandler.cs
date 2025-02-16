@@ -4,12 +4,6 @@ using Common.GlobalResponses.Generics;
 using Domain.Entities;
 using MediatR;
 using Repository.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Application.CQRS.Customers.Handlers.CommandHandlers;
 
 public sealed class AddCustomerHandler (IUnitOfWork unitOfWork): IRequestHandler<AddCustomerRequest,

@@ -73,10 +73,10 @@ public class SqlProductRepository : BaseSqlRepository, IProductRepository
     public async Task UpdateAsync(ProductDto product)
     {
         var sql = @"UPDATE Products
-                      Set Name=@Name,
-                      UpdatedBy =@UpdatedBy,
-                      UpdatedDate=GETDATE()
-                      Where Id =@Id ";
+                    Set Name=@Name,
+                    UpdatedBy =@UpdatedBy,
+                    UpdatedDate=GETDATE()
+                    Where Id =@Id";
         using var conn = OpenConnection();
         await conn.QueryAsync<ProductDto>(sql, product);
     }

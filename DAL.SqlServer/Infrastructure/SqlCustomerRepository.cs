@@ -44,10 +44,10 @@ public class SqlCustomerRepository : BaseSqlRepository, ICustomerRepository
         var sql = @"SELECT c.*
                     From Customers c
                     WHERE c.Id=@Id AND c.IsDeleted=0;";
-   
+        //https://www.learndapper.com/saving-data/insert
         using var connection = OpenConnection();
-       return await connection.QueryFirstOrDefaultAsync<Customer>(sql,new { Id =id}) ;  
-             
+        return await connection.QueryFirstOrDefaultAsync<Customer>(sql, new { Id = id });
+
     }
 
     public Task<IEnumerable<Customer>> GetByKey(string key)
@@ -60,3 +60,5 @@ public class SqlCustomerRepository : BaseSqlRepository, ICustomerRepository
         throw new NotImplementedException();
     }
 }
+
+
