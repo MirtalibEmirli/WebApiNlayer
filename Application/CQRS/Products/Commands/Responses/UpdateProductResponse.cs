@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Application.CQRS.Products.Commands.Responses;
 
-public class UpdateProductResponse
+public sealed class UpdateProductResponse
 {
     public bool Success { get; set; }   
 }

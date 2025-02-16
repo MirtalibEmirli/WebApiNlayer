@@ -19,7 +19,8 @@ public class SqlUnitOfWork(string connection ,AppDbContext context) : IUnitOfWor
 
     public IProductRepository ProductRepository => productRepository??new SqlProductRepository(_connectionString,_context);
 
-    public ICustomerRepository CustomerRepository => throw new NotImplementedException();
+    public SqlCustomerRepository customerRepository;
+    public ICustomerRepository CustomerRepository => customerRepository ?? new SqlCustomerRepository(_connectionString,_context);
 
     public async Task<int> SaveChanges()
     {

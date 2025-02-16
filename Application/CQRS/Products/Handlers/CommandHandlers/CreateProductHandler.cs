@@ -4,15 +4,10 @@ using Common.GlobalResponses.Generics;
 using Domain.Entities;
 using MediatR;
 using Repository.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.CQRS.Products.Handlers.CommandHandlers;
 
-public class CreateProductHandler(IUnitOfWork unitOfWork)
+public sealed class CreateProductHandler(IUnitOfWork unitOfWork)
 : IRequestHandler<CreateProductRequest, ResponseModel<CreateProductResponse>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;

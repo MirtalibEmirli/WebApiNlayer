@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace Application.CQRS.Products.Commands.Responses;
 
-public class DeleteProductResponse
-{
-    public bool isDeleted { get; set; }
+//record struct a bax
+  
+public   record struct DeleteProductResponse
+{  
+    
+    public string Message { get; set; }
+
 }

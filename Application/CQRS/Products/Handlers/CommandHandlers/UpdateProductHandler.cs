@@ -3,15 +3,10 @@ using Application.CQRS.Products.Commands.Responses;
 using Common.GlobalResponses.Generics;
 using MediatR;
 using Repository.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.CQRS.Products.Handlers.CommandHandlers;
 
-public class UpdateProductHandler(IUnitOfWork unitOfWork) :
+public sealed class UpdateProductHandler(IUnitOfWork unitOfWork) :
     IRequestHandler<UpdateProductRequest, ResponseModel<UpdateProductResponse>>
 {
     private readonly IUnitOfWork _unitOfWork= unitOfWork;

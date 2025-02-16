@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Application.CQRS.Products.Commands.Requests;
-public class CreateProductRequest : IRequest<ResponseModel<CreateProductResponse>>
+public sealed class CreateProductRequest : IRequest<ResponseModel<CreateProductResponse>>
 {
     public string Name { get; set; }    
 }

@@ -1,10 +1,11 @@
 ﻿using Application.CQRS.Products.Queries.Responses;
+using Common.GlobalResponses;
 using Common.GlobalResponses.Generics;
 using MediatR;
 
 namespace Application.CQRS.Products.Queries.Requests;
 
-public sealed class GetProductByIdRequest:IRequest<ResponseModel<GetProductByIdResponse>>
+public sealed class GetProductsByKeyRequest:IRequest<ResponseModel<GetProductsByKeyResponse>>
 {
-    public int Id { get; set; }
+    public string Key { get; set; }
 }

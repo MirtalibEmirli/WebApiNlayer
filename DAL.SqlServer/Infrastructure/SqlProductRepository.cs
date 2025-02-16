@@ -14,8 +14,8 @@ public class SqlProductRepository : BaseSqlRepository, IProductRepository
     {
         _appDbContext = appDb;
 
-
     }
+
     public async Task AddAsync(Product product)
     {
         var sql = @"INSERT INTO Products([Name],[CreatedBy])
@@ -26,7 +26,7 @@ public class SqlProductRepository : BaseSqlRepository, IProductRepository
         product.Id = generatedID;
     }
 
-    public async Task<bool> DeleteAsync(int  id, int deletedBy)
+    public async Task<bool> DeleteAsync(int id, int deletedBy)
     {
         var checkSql = "SELECT Id FROM Products WHERE Id =@id AND IsDeleted=0";
         var sql = @"UPDATE Products
@@ -37,10 +37,10 @@ public class SqlProductRepository : BaseSqlRepository, IProductRepository
 
         using var conn = OpenConnection();
         using var transaction = conn.BeginTransaction();
-        var productId = await conn.ExecuteScalarAsync<int?>(checkSql, new {id}, transaction);
+        var productId = await conn.ExecuteScalarAsync<int?>(checkSql, new { id }, transaction);
         if (!productId.HasValue)
             return false;
-         var affectedRow = await conn.ExecuteAsync(sql,new {id, deletedBy },transaction); 
+        var affectedRow = await conn.ExecuteAsync(sql, new { id, deletedBy }, transaction);
         transaction.Commit();
         return affectedRow > 0;
     }
@@ -60,15 +60,14 @@ public class SqlProductRepository : BaseSqlRepository, IProductRepository
         using var conn = OpenConnection();
         return await conn.QueryFirstOrDefaultAsync<Product>(sql, new { id = productId });
     }
+
     public async Task<IEnumerable<Product>> GetByKey(string key)
     {
-        var sql = @"DECLARE @searchText NVARCHAR(max)
-                        Set @searchText = '%' + @name +'%' 
-                        Select p.*
+        var sql = @"   Select p.*
                         From Products p            
-                        Where p.[Name] like @searchText and p.IsDeleted=0";
+                        Where p.[Name] LIKE '%' +@Key +'%' and p.IsDeleted=0";
         using var conn = OpenConnection();
-        return await conn.QueryAsync<Product>(sql, key);
+        return await conn.QueryAsync<Product>(sql, new { Key = key });
     }
 
     public async Task UpdateAsync(ProductDto product)

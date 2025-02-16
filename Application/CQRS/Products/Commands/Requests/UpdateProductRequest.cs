@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Application.CQRS.Products.Commands.Requests;
 
-public class UpdateProductRequest:IRequest<ResponseModel<UpdateProductResponse>>
+public sealed class UpdateProductRequest:IRequest<ResponseModel<UpdateProductResponse>>
 {
     public ProductDto Product { get; set; }    
 
