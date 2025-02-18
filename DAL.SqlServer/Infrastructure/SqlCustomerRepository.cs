@@ -50,9 +50,14 @@ public class SqlCustomerRepository : BaseSqlRepository, ICustomerRepository
 
     }
 
-    public Task<IEnumerable<Customer>> GetByKey(string key)
+    public async Task<IEnumerable<Customer>> GetByKey(string key)
     {
-        throw new NotImplementedException();
+        var sql = @"SELECT c.*
+                    FROM Customers c
+                    WHERE c.[Name] LIKE '%' + @Key + '%' AND c.IsDeleted=0";
+        using var conn = OpenConnection();
+        return await conn.QueryFirstOrDefaultAsync(sql, new { Key = key });
+
     }
 
     public Task UpdateAsync(Customer customer)

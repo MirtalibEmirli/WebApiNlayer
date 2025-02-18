@@ -1,6 +1,11 @@
-﻿namespace Application.CQRS.Customers.Queries.Requests;
+﻿using Application.CQRS.Customers.Queries.Responses;
+using Common.GlobalResponses.Generics;
+using MediatR;
 
-public  sealed class GetCustomerByKeyRequest
+namespace Application.CQRS.Customers.Queries.Requests;
+
+public  sealed class GetCustomerByKeyRequest:IRequest<ResponseModel<GetCustomerByKeyResponse>>
 {
+    public string Key { get; set; }
 
 }

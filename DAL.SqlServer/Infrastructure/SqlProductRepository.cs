@@ -29,7 +29,8 @@ public class SqlProductRepository : BaseSqlRepository, IProductRepository
     public async Task<bool> DeleteAsync(int id, int deletedBy)
     {
         var checkSql = "SELECT Id FROM Products WHERE Id =@id AND IsDeleted=0";
-        var sql = @"UPDATE Products
+
+        var sql = @"    UPDATE Products
                         Set IsDeleted=1,
                         DeletedBy=@deletedBy,
                         DeletedDate=GETDATE()

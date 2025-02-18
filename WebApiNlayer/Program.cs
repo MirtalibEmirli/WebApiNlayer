@@ -1,5 +1,6 @@
 using Application;
 using DAL.SqlServer;
+using WebApiNlayer.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +15,9 @@ var conn = builder.Configuration.GetConnectionString("Default");
 builder.Services.AddSqlServerServices(conn);
 
 builder.Services.AddApplicationServices();
+builder.Services.AddTransient<MainExceptionHandlerMiddleware>();
 
+//
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -26,7 +29,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
-app.MapControllers();
+app.UseMiddleware<MainExceptionHandlerMiddleware>();
+app.MapControllers();                                                                                           
 
 app.Run();

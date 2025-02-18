@@ -1,9 +1,7 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using Application.CQRS.Products.Commands.Requests;
+﻿using Application.CQRS.Products.Commands.Requests;
 using Application.CQRS.Products.Queries.Requests;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Application.CQRS.Products.Queries.Responses;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
 namespace WebApiNlayer.Controllers;
 
 [ApiController]
@@ -24,7 +22,7 @@ public class ProductController(ISender sender) : ControllerBase
         var response = await _sender.Send(getProductRequest);
         if (response.IsSuccess == false || response.Data == null)
         {
-            return NotFound(response.Errors);
+            return NotFound(response.Errors);                                    
         }
         return Ok(response.Data);
     }
@@ -42,14 +40,21 @@ public class ProductController(ISender sender) : ControllerBase
     
         return  Ok( await _sender.Send(new GetProductsByKeyRequest { Key=key}));
     }
+      
+    //[HttpDelete()]
+    //public async Task<IActionResult> Delete([FromBody] DeleteProductRequest
+    //     deleteProductRequest)
+    //{
+    //    return Ok(await _sender.Send(deleteProductRequest));
+    //}
 
-    [HttpDelete]
-    public async Task<IActionResult> Delete([FromBody] DeleteProductRequest
-         deleteProductRequest)
+    [HttpDelete("id/{id}")]
+    public async Task<IActionResult> Delete([FromRoute] int id)  
+         
     {
-        return Ok(await _sender.Send(deleteProductRequest));
-    }
-
+        DeleteProductRequest request = new DeleteProductRequest { Id = id };    
+        return Ok(await _sender.Send(request));
+    } 
 
     [HttpPut]
     public async Task<IActionResult> UpdateProduct([FromBody] UpdateProductRequest updateProductRequest)
@@ -59,3 +64,10 @@ public class ProductController(ISender sender) : ControllerBase
 
 
 } 
+
+
+
+
+
+
+

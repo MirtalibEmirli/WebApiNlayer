@@ -12,6 +12,7 @@ ResponseModel<AddCustomerResponse>>
     private readonly IUnitOfWork _unitOfWork =unitOfWork;           
     public async Task<ResponseModel<AddCustomerResponse>> Handle(AddCustomerRequest request, CancellationToken cancellationToken)
     {
+        //exceptionhandler yaz
         if(request==null||string.IsNullOrWhiteSpace(request.FirstName)) return new ResponseModel<AddCustomerResponse>
         {
             Data = null,
@@ -26,11 +27,9 @@ ResponseModel<AddCustomerResponse>>
         };
         await _unitOfWork.CustomerRepository.AddAsync(newCustomer);
         var responseModel = new AddCustomerResponse()
-        {
-            Name=newCustomer.FirstName,
+        { Name=newCustomer.FirstName,
             CreatedDate =newCustomer.CreatedDate,
             Id = newCustomer.Id,    
-            
         };
 
         return   new ResponseModel<AddCustomerResponse>
