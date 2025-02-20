@@ -46,6 +46,9 @@ app.UseIpRateLimiting();
 app.UseAuthorization();
 app.UseMiddleware<MainExceptionHandlerMiddleware>();
 //app.UseMiddleware<ExceptionHandlerMiddleware>();                
-app.MapControllers();                                                                                           
+app.MapControllers();
 
 app.Run();
+
+//custom rate limit yaz --, yeni bir class add ed cqrs dto ile yaz ----, fso suallar birde+
+
