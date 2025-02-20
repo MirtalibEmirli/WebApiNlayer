@@ -1,25 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Common.GlobalResponses;
 
-namespace Common.GlobalResponses;
-
-public  class ResponseModel
+public class ResponseModel
 {
     public bool IsSuccess { get; set; }
     public List<string> Errors { get; set; }
     public ResponseModel(List<string> errors)
     {
         IsSuccess = false;
-        Errors = errors;    
+        Errors = errors;
     }
 
     public ResponseModel()
     {
-            IsSuccess=true;
-        Errors = null;    
+        IsSuccess = true;
+        Errors = null;
     }
 }
 

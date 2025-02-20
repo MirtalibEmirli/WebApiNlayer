@@ -22,6 +22,9 @@ public class SqlUnitOfWork(string connection ,AppDbContext context) : IUnitOfWor
     public SqlCustomerRepository customerRepository;
     public ICustomerRepository CustomerRepository => customerRepository ?? new SqlCustomerRepository(_connectionString,_context);
 
+    public SqlUserRepository userRepository;    
+    public IUserRepository UserRepository => userRepository??new SqlUserRepository(_context);
+
     public async Task<int> SaveChanges()
     {
         return await _context.SaveChangesAsync();

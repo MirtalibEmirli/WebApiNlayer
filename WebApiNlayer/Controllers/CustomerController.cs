@@ -23,12 +23,31 @@ public class CustomerController(ISender sender) : Controller
         return Ok( await _sender.Send(request));
     }
 
-    [HttpGet("id/{id}")]
-    public async Task<IActionResult> GetById([FromRoute] int id)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(int id)
     {
         var request = new GetCustomerByIdRequest { Id = id };    
         return Ok(await _sender.Send(request));
     }
 
+    [HttpGet("search")]
+    public async Task<IActionResult> GetByKey([FromQuery] string key)
+    {
+        var request = new GetCustomerByKeyRequest { Key = key };    
+        return Ok(await sender.Send(request)); 
+    }
+
+    [HttpDelete]
+    public async Task<IActionResult> DeleteById([FromQuery] int id)
+    {
+        var response =await _sender.Send(new DeleteCustomerRequest { Id = id });     
+        return Ok(response);    
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> Update([FromBody] UpdateCustomerRequest updateCustomerRequest)
+    {
+        return Ok( await _sender.Send(updateCustomerRequest)); 
+    }
 
 }

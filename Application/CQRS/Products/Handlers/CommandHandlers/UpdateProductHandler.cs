@@ -1,5 +1,6 @@
 ﻿using Application.CQRS.Products.Commands.Requests;
 using Application.CQRS.Products.Commands.Responses;
+using Common.Exceptions;
 using Common.GlobalResponses.Generics;
 using MediatR;
 using Repository.Common;
@@ -13,14 +14,15 @@ public sealed class UpdateProductHandler(IUnitOfWork unitOfWork) :
     public async Task<ResponseModel<UpdateProductResponse>> 
         Handle(UpdateProductRequest request, CancellationToken cancellationToken)
     {
-        if (request.Product == null)
-            return new ResponseModel<UpdateProductResponse>   
-            {
-                Data = new UpdateProductResponse { Success = false },
+        if (request.Product == null ||request.Product.Id==0)
+            throw new BadRequestException("The Request is not correct form .");
+            //return new ResponseModel<UpdateProductResponse>   
+            //{
+            //    Data = new UpdateProductResponse { Success = false },
                 
-                Errors = ["the product is null "],
-                IsSuccess = false,
-            };
+            //    Errors = ["the product is null "],
+            //    IsSuccess = false,
+            //};
 
         await _unitOfWork.ProductRepository.UpdateAsync(request.Product);
 

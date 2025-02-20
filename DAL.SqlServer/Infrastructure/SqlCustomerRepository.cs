@@ -1,7 +1,8 @@
-﻿using Domain.Entities;
-using Repository.Repositories;
+﻿using Common.Exceptions;
 using DAL.SqlServer.Context;
 using Dapper;
+using Domain.Entities;
+using Repository.Repositories;
 
 namespace DAL.SqlServer.Infrastructure;
 
@@ -13,6 +14,8 @@ public class SqlCustomerRepository : BaseSqlRepository, ICustomerRepository
         _context = appContext;
     }
 
+    public Exception UpdateFailedException { get; private set; }
+
     public async Task AddAsync(Customer customer)
     {
         using var conn = OpenConnection();
@@ -21,9 +24,23 @@ public class SqlCustomerRepository : BaseSqlRepository, ICustomerRepository
         customer.Id = generatedID;
     }
 
-    public Task<bool> DeleteAsync(int id, int deletedBy)
+    public async Task<bool> DeleteAsync(int Id, int deletedBy)
     {
-        throw new NotImplementedException();
+        var checkSql = "Select Id From Customers Where Id=@id AND IsDeleted=0";
+        var sql = @"UPDATE Customers
+                    SET IsDeleted=1,
+                    DeletedBy =@deletedBy,
+                    DeletedDate =GETDATE()
+                    WHERE Id =@id";
+        using var connection = OpenConnection();
+        using var transaction = connection.BeginTransaction();
+        var customerId = await connection.ExecuteScalarAsync<int?>(checkSql, new { Id }, transaction);
+        if (!customerId.HasValue)
+            return false;
+
+        var affectedRow = await connection.ExecuteAsync(sql, new { Id, deletedBy }, transaction);
+        transaction.Commit();
+        return affectedRow > 0;
     }
 
 
@@ -34,9 +51,12 @@ public class SqlCustomerRepository : BaseSqlRepository, ICustomerRepository
         return conn.Query<Customer>(sql).AsQueryable();
     }
 
-    public Task<IEnumerable<Customer>> GetAllAsync()
+    public async Task<IEnumerable<Customer>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        var sql = "Select * FROM Customers";
+        using var conn = OpenConnection();
+        return await conn.QueryAsync<Customer>(sql);
+
     }
 
     public async Task<Customer> GetByIdAsync(int id)
@@ -54,16 +74,53 @@ public class SqlCustomerRepository : BaseSqlRepository, ICustomerRepository
     {
         var sql = @"SELECT c.*
                     FROM Customers c
-                    WHERE c.[Name] LIKE '%' + @Key + '%' AND c.IsDeleted=0";
+                    WHERE c.[FirstName] LIKE '%' + @Key + '%' AND c.IsDeleted=0";
         using var conn = OpenConnection();
-        return await conn.QueryFirstOrDefaultAsync(sql, new { Key = key });
+        return await conn.QueryAsync<Customer>(sql, new { Key = key });
 
     }
 
-    public Task UpdateAsync(Customer customer)
+    public async Task<int> UpdateAsync(Customer customer)
     {
-        throw new NotImplementedException();
+        var sql = @"UPDATE Customers 
+                    Set FirstName = @FirstName,
+                    LastName = @LastName,
+                    Email=@Email,
+                    UpdatedBy =@UpdatedBy,
+                    UpdatedDate  =@UpdatedDate,
+                    Balance=@Balance,
+                    Bill=@Bill
+                    WHERE Id=@Id";
+        using var conn = OpenConnection();
+        using var transaction = conn.BeginTransaction();
+
+        try
+        {
+            customer.UpdatedDate = DateTime.UtcNow;//daha suretlidir database terefde yazmaqdansa
+            var affectedRows = await conn.ExecuteAsync(sql, customer, transaction);
+            if (affectedRows == 0)
+            {
+                transaction.Rollback();
+                return 0;
+            }
+            transaction.Commit();
+            return affectedRows;
+        }
+        catch (Exception error)
+        {
+            transaction.Rollback();
+
+            throw new UpdateFailedException("The Update Failed in the Dapper side ");
+        }
+
+
     }
 }
 
 
+//var emailCheckSql = "SELECT COUNT(*) FROM Customers WHERE Email = @Email AND Id <> @Id";
+//    var existingEmails = await conn.ExecuteScalarAsync<int>(emailCheckSql, new { customer.Email, customer.Id }, transaction);
+//if (existingEmails > 0)
+//{
+//    throw new DatabaseException($"Email {customer.Email} is already in use.");
+//}

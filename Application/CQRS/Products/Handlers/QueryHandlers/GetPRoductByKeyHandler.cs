@@ -1,5 +1,6 @@
 ﻿using Application.CQRS.Products.Queries.Requests;
 using Application.CQRS.Products.Queries.Responses;
+using Common.Exceptions;
 using Common.GlobalResponses;
 using Common.GlobalResponses.Generics;
 using MediatR;
@@ -20,19 +21,16 @@ public sealed class GetProductByKeyRequestHandler(IUnitOfWork unitOfWork) : IReq
     {
         var products =await _unitOfWork.ProductRepository.GetByKey(request.Key);
         //var products =   _unitOfWork.ProductRepository.GetAll().Where(c=>c.Name.Contains(request.Key)).ToList();
-        if (products == null) return new ResponseModel<GetProductsByKeyResponse>
-        {
-            Data = null
-            ,
-            IsSuccess = false,
-            Errors = ["Ther is no product with this key"]
-        };
+        if (products == null) throw new BadRequestException("There is no product with this key");
 
         var responseModel = new GetProductsByKeyResponse();
+        //automapper lazimdi
         foreach (var item in products)
         {
             responseModel.Datas.Add(new Dto { CreatedDate=item.CreatedDate,Name=item.Name,Id=item.Id});
         }
+
+
         return new ResponseModel<GetProductsByKeyResponse>
         {
             IsSuccess = true,   

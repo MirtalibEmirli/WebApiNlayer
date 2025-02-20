@@ -1,6 +1,7 @@
 ﻿
 using Application.CQRS.Products.Queries.Requests;
 using Application.CQRS.Products.Queries.Responses;
+using Common.Exceptions;
 using Common.GlobalResponses.Generics;
 using MediatR;
 using Repository.Common;
@@ -21,15 +22,11 @@ public sealed class GetAllProdcutsHandler(IUnitOfWork unitOfWork) :
         var products = _unitOfWork.ProductRepository.GetAll();
 
         ///checked it 
-        if (products == null) return new ResponseModelPagination<GetAllProductsResponse>()
-        {
-            Data = null,
-            IsSuccess = false,
-            Errors = ["There is no product in The Database"]
-        };
+        if (products == null) throw new BadRequestException("There is no product in The Database");
 
      
         var totalCount = products.Count();
+
         //product for mapp get for the page
         var productToMapp = products.Skip((request.Page - 1) * request.Limit).Take(request.Limit);
 

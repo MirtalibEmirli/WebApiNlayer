@@ -1,5 +1,6 @@
 ﻿using Application.CQRS.Products.Commands.Requests;
 using Application.CQRS.Products.Commands.Responses;
+using AutoMapper;
 using Common.Exceptions;
 using Common.GlobalResponses.Generics;
 using Domain.Entities;
@@ -8,9 +9,10 @@ using Repository.Common;
 
 namespace Application.CQRS.Products.Handlers.CommandHandlers;
 
-public sealed class CreateProductHandler(IUnitOfWork unitOfWork)
+public sealed class CreateProductHandler(IUnitOfWork unitOfWork,IMapper mapper)
 : IRequestHandler<CreateProductRequest, ResponseModel<CreateProductResponse>>
 {
+   private readonly IMapper _mapper=mapper; 
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     public async Task<ResponseModel<CreateProductResponse>>
 
@@ -20,6 +22,8 @@ public sealed class CreateProductHandler(IUnitOfWork unitOfWork)
         {
             Name = request.Name,
         };
+        //var mappedProduct = _mapper.Map<Product>(request);  
+
         if (string.IsNullOrEmpty(product.Name))
         {
             //return new ResponseModel<CreateProductResponse>
@@ -31,11 +35,7 @@ public sealed class CreateProductHandler(IUnitOfWork unitOfWork)
 
             //};
             throw new BadRequestException("The Product Sended for add is empty.Please add the correct properties for Product and send request again");
-
-
         }
-
-
 
         await _unitOfWork.ProductRepository.AddAsync(product);
         //burda artiq geelen rquestin esas isini gorduk yeni sadece biz elave edirik ve fso

@@ -8,5 +8,5 @@ namespace Application.CQRS.Customers.Commands.Responses;
 
 public record struct DeleteCustomerResponse
 {
-    public string Name { get; set; }
+    public int Id { get; set; }
 }

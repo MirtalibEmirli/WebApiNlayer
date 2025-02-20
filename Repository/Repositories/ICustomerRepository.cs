@@ -10,7 +10,7 @@ namespace Repository.Repositories;
 public interface ICustomerRepository
 {
     Task AddAsync(Customer customer);
-    Task UpdateAsync(Customer customer);
+    Task<int> UpdateAsync(Customer customer);
     Task<bool> DeleteAsync(int id,int deletedBy);  
     IQueryable<Customer> GetAll();
     Task<IEnumerable<Customer>> GetAllAsync();
