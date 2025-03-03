@@ -1,7 +1,7 @@
 ﻿
 using Common.Exceptions;
 using Common.GlobalResponses;
-using Microsoft.AspNetCore.Http.HttpResults;
+using FluentValidation;
 using System.Net;
 using System.Text.Json;
 
@@ -46,10 +46,14 @@ public class MainExceptionHandlerMiddleware : IMiddleware
                 case UpdateFailedException:
                     httpStatusCode = HttpStatusCode.InternalServerError;
                     break;
+                case ValidationException ex:
+                    await WriteValidationError(context, HttpStatusCode.BadRequest, ex);
+                    break;
 
                 default:
-                    message = new List<string> { "The error may ba in a dapper or sql " };
-                    await WriteError(context, HttpStatusCode.Conflict, message);
+                    message = new List<string> { error.Message};
+                    httpStatusCode = HttpStatusCode.InternalServerError;    
+
                     break;
             }
             await WriteError(context, httpStatusCode, message);
@@ -67,7 +71,17 @@ public class MainExceptionHandlerMiddleware : IMiddleware
         await context.Response.WriteAsync(json);
     }
 
+    public async Task WriteValidationError(HttpContext context,HttpStatusCode statusCode, ValidationException exception)
+    {
+        context.Response.Clear();
+        context.Response.StatusCode= (int)statusCode;   
+        context.Response.ContentType= "application/json";
 
+        var validationErrors = exception.Errors.Select(e => new { field = e.PropertyName,message=e.ErrorMessage });
+
+        var  json = JsonSerializer.Serialize(new {validationErrors = validationErrors});                        
+        await context.Response.WriteAsync(json);
+    }
 
 
 }

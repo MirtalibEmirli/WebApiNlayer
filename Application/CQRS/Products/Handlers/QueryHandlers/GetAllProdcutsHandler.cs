@@ -1,6 +1,7 @@
 ﻿
 using Application.CQRS.Products.Queries.Requests;
 using Application.CQRS.Products.Queries.Responses;
+using AutoMapper;
 using Common.Exceptions;
 using Common.GlobalResponses.Generics;
 using MediatR;
@@ -9,10 +10,11 @@ using System.Collections.Generic;
 
 namespace Application.CQRS.Products.Handlers.QueryHandlers;
 
-public sealed class GetAllProdcutsHandler(IUnitOfWork unitOfWork) :
+public sealed class GetAllProdcutsHandler(IUnitOfWork unitOfWork,IMapper mapper) :
     IRequestHandler<GetAllProductsRequest, ResponseModelPagination<GetAllProductsResponse>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
+    private readonly IMapper _mapper = mapper;
     public async Task<ResponseModelPagination<GetAllProductsResponse>>
       Handle(GetAllProductsRequest request, CancellationToken cancellationToken)
     {
@@ -33,15 +35,10 @@ public sealed class GetAllProdcutsHandler(IUnitOfWork unitOfWork) :
         //products to response
         var productsToResponse = new List<GetAllProductsResponse>();
 
+
         foreach (var item in productToMapp)
         {
-            var responseItem = new GetAllProductsResponse()
-            {
-                Id = item.Id,
-                Name = item.Name,
-                CreatedTime = item.CreatedDate,
-                UpdatedTime = item.UpdatedDate,
-            };
+            var responseItem = _mapper.Map<GetAllProductsResponse>(item);   
             productsToResponse.Add(responseItem);
         }
 

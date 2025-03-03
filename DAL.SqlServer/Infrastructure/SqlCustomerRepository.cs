@@ -46,7 +46,7 @@ public class SqlCustomerRepository : BaseSqlRepository, ICustomerRepository
 
     public IQueryable<Customer> GetAll()
     {
-        var sql = "SELECT * FROM Customers";
+        var sql = "SELECT c.* FROM Customers c where c.IsDeleted=0";
         using var conn = OpenConnection();
         return conn.Query<Customer>(sql).AsQueryable();
     }

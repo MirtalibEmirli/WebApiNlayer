@@ -1,6 +1,7 @@
 ﻿using Application;
 using AspNetCoreRateLimit;
 using DAL.SqlServer;
+using Microsoft.OpenApi.Models;
 using WebApiNlayer.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,7 +10,10 @@ builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+   
+});
 
 var conn = builder.Configuration.GetConnectionString("Default");
 
@@ -18,6 +22,8 @@ builder.Services.AddSqlServerServices(conn);
 builder.Services.AddApplicationServices();
 builder.Services.AddTransient<MainExceptionHandlerMiddleware>();
 
+
+#region RateLimit
 
 // 1️⃣ Memory Cache istifadə etmək üçün lazımlı xidmətləri əlavə edirik
 builder.Services.AddMemoryCache();
@@ -30,6 +36,8 @@ builder.Services.AddInMemoryRateLimiting();
 // 2️⃣ Rate Limiting konfiqurasiyasını yükləyirik
 builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
 builder.Services.Configure<IpRateLimitPolicies>(builder.Configuration.GetSection("IpRateLimitPolicies"));
+
+#endregion
 
 //
 var app = builder.Build();
@@ -44,8 +52,10 @@ app.UseHttpsRedirection();
 app.UseIpRateLimiting();
 
 app.UseAuthorization();
+
 app.UseMiddleware<MainExceptionHandlerMiddleware>();
-//app.UseMiddleware<ExceptionHandlerMiddleware>();                
+//app.UseMiddleware<ExceptionHandlerMiddleware>();
+
 app.MapControllers();
 
 app.Run();

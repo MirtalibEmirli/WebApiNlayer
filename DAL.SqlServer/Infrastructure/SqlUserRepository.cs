@@ -26,8 +26,9 @@ public class SqlUserRepository(AppDbContext appDbContext) : IUserRepository
 
     public async Task RegisterUser(User user)
     {
-        await _context.Users.AddAsync(user);
-        await _context.SaveChangesAsync();
+         await _context.Users.AddAsync(user);
+         
+        //await _context.SaveChangesAsync();
     }
 
     public async Task Remove(int id)

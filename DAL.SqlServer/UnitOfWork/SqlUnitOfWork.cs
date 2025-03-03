@@ -2,11 +2,6 @@
 using DAL.SqlServer.Infrastructure;
 using Repository.Common;
 using Repository.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DAL.SqlServer.UnitOfWork;
 
@@ -24,6 +19,9 @@ public class SqlUnitOfWork(string connection ,AppDbContext context) : IUnitOfWor
 
     public SqlUserRepository userRepository;    
     public IUserRepository UserRepository => userRepository??new SqlUserRepository(_context);
+
+    public SqlTableRepository tableRepository;
+    public ITableRepository TableRepository => tableRepository??new SqlTableRepository(_connectionString, _context);
 
     public async Task<int> SaveChanges()
     {

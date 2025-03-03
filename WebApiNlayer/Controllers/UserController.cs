@@ -1,6 +1,5 @@
-﻿using Application.CQRS.Users.DTOs;
+﻿using Application.CQRS.Users.Handlers;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using static Application.CQRS.Users.Handlers.GetById;
 
@@ -18,5 +17,18 @@ public class UserController(ISender sender) : ControllerBase
         var request = new Query() { Id = id };  
         return Ok(await sender.Send(request));
 
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Register([FromBody] Application.CQRS.Users.Handlers.Register.Command request)
+    {
+       return Ok(await sender.Send(request)); 
+    }
+
+
+    [HttpPut]
+    public async Task<IActionResult> Update([FromBody] Update.Command command)
+    {
+        return Ok(await sender.Send(command));
     }
 }
