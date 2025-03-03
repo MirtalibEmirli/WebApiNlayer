@@ -1,6 +1,7 @@
 ﻿using Application.CQRS.Users.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using static Application.CQRS.Users.Handlers.GetById;
 
@@ -18,5 +19,11 @@ public class UserController(ISender sender) : ControllerBase
         var request = new Query() { Id = id };  
         return Ok(await sender.Send(request));
 
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Login([FromBody] Application.CQRS.Users.Handlers.Login.LoginRequest request)
+    {
+        return Ok(await sender.Send(request));
     }
 }
