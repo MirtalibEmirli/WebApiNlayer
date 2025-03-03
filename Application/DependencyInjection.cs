@@ -1,4 +1,5 @@
 ﻿using Application.AutoMapper;
+using Application.Services.BackgroundServices;
 using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +22,9 @@ public static class DependencyInjection
         services.AddSingleton(mapper);  
 
         services.AddMediatR(Assembly.GetExecutingAssembly());
+        services.AddHostedService<DeleteUserBackgroundService>();
+        //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>));
+
         return services;
     }
 }
