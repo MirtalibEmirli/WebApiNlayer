@@ -49,7 +49,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseIpRateLimiting();
+//app.UseIpRateLimiting();
 
 app.UseAuthorization();
 
