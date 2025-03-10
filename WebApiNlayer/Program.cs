@@ -22,22 +22,7 @@ builder.Services.AddSqlServerServices(conn);
 builder.Services.AddApplicationServices();
 builder.Services.AddTransient<MainExceptionHandlerMiddleware>();
 
-
-#region RateLimit
-
-// 1️⃣ Memory Cache istifadə etmək üçün lazımlı xidmətləri əlavə edirik
-builder.Services.AddMemoryCache();
-builder.Services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
-builder.Services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
-builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
-builder.Services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
-builder.Services.AddInMemoryRateLimiting();
-
-// 2️⃣ Rate Limiting konfiqurasiyasını yükləyirik
-builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
-builder.Services.Configure<IpRateLimitPolicies>(builder.Configuration.GetSection("IpRateLimitPolicies"));
-
-#endregion
+ 
 
 //
 var app = builder.Build();

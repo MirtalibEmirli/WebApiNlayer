@@ -29,7 +29,7 @@ public class MainExceptionHandlerMiddleware : IMiddleware
         catch (Exception error)
         {
             var message = new List<string>() { error.Message };
-            HttpStatusCode httpStatusCode = HttpStatusCode.OK;
+            HttpStatusCode httpStatusCode = HttpStatusCode.InternalServerError;
             switch (error)
             {
 
@@ -48,10 +48,9 @@ public class MainExceptionHandlerMiddleware : IMiddleware
                     break;
                 case ValidationException ex:
                     await WriteValidationError(context, HttpStatusCode.BadRequest, ex);
-                    break;
+                    return;
 
                 default:
-                    message = new List<string> { error.Message};
                     httpStatusCode = HttpStatusCode.InternalServerError;    
 
                     break;
